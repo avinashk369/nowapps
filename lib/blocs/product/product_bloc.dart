@@ -17,9 +17,49 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
   ProductBloc(this._productRepositoryImpl) : super(ProductInitializing()) {
     on<LoadPrdoucts>((event, emit) => _loadProducts(event, emit));
+    on<AddToCart>((event, emit) => _addToCart(event, emit));
+    on<RemoveFromCart>((event, emit) => _removeFromCart(event, emit));
   }
-  int page = 1;
-  //load news
+  Future _removeFromCart(
+      RemoveFromCart event, Emitter<ProductState> emit) async {
+    try {
+      final state = this.state;
+      if (state is ProductLoaded) {
+        List<ProductModel> productList = state.products.map((pro) {
+          if (pro.prodId == event.productModel.prodId) {
+            if (pro.count > 0) {
+              pro.count--;
+            }
+          }
+          return pro;
+        }).toList();
+        emit(ProductLoaded(products: productList));
+      }
+    } catch (e) {
+      emit(ProductError(message: "Not added to the cart"));
+    }
+  }
+
+  Future _addToCart(AddToCart event, Emitter<ProductState> emit) async {
+    try {
+      final state = this.state;
+
+      if (state is ProductLoaded) {
+        List<ProductModel> products = state.products.map((pro) {
+          if (pro.prodId == event.productModel.prodId) {
+            ++pro.count;
+          }
+
+          return pro;
+        }).toList();
+        emit(ProductLoaded(products: products));
+      }
+    } catch (e, stack) {
+      print("somethign wrong ${stack.toString()}");
+      emit(ProductError(message: "Not added to the cart"));
+    }
+  }
+
   Future _loadProducts(LoadPrdoucts event, Emitter<ProductState> emit) async {
     try {
       bool dbStats = PreferenceUtils.getBool(dbSync);

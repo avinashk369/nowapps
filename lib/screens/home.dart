@@ -94,42 +94,42 @@ class _HomeState extends State<Home> {
           final state = context.watch<ToggleIndexBloc>().state;
           print("state ${state.isSelected}");
           return BottomAppBar(
-              color: state.isSelected ||
-                      PreferenceUtils.getString(seletedRetailer).isNotEmpty
-                  ? primaryLight
-                  : Colors.grey[400],
-              child: SizedBox(
-                height: kToolbarHeight,
-                child: InkWell(
-                  onTap: state.isSelected ||
-                          PreferenceUtils.getString(seletedRetailer).isNotEmpty
-                      ? () {
-                          PreferenceUtils.putString(
-                              seletedRetailer, retailerId);
+            color: state.isSelected ||
+                    PreferenceUtils.getString(seletedRetailer).isNotEmpty
+                ? primaryLight
+                : Colors.grey[400],
+            child: SizedBox(
+              height: kToolbarHeight,
+              child: InkWell(
+                onTap: state.isSelected ||
+                        PreferenceUtils.getString(seletedRetailer).isNotEmpty
+                    ? () {
+                        PreferenceUtils.putString(seletedRetailer, retailerId);
 
-                          Navigator.of(context).pushNamed(
-                            products,
-                          );
-                        }
-                      : null,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Check In".toUpperCase(),
-                        textAlign: TextAlign.center,
-                        style: kLabelStyleBold.copyWith(
-                            color: state.isSelected ||
-                                    PreferenceUtils.getString(seletedRetailer)
-                                        .isNotEmpty
-                                ? secondaryLight
-                                : Colors.grey[100],
-                            fontSize: 18),
-                      ),
-                    ],
-                  ),
+                        Navigator.of(context).pushNamed(
+                          products,
+                        );
+                      }
+                    : null,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Check In".toUpperCase(),
+                      textAlign: TextAlign.center,
+                      style: kLabelStyleBold.copyWith(
+                          color: state.isSelected ||
+                                  PreferenceUtils.getString(seletedRetailer)
+                                      .isNotEmpty
+                              ? secondaryLight
+                              : Colors.grey[100],
+                          fontSize: 18),
+                    ),
+                  ],
                 ),
-              ));
+              ),
+            ),
+          );
         }),
       ),
     );

@@ -32,3 +32,14 @@ class ProductLoaded extends ProductState {
   @override
   List<Object> get props => [products];
 }
+
+class CartUpdated extends ProductState {
+  final List<ProductModel> products;
+
+  const CartUpdated({
+    required this.products,
+  });
+
+  @override
+  List<Object> get props => [products];
+}

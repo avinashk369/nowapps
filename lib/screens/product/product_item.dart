@@ -67,7 +67,7 @@ class ProductItem extends StatelessWidget {
             ),
           )),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Flexible(
                 child: IconButton(
