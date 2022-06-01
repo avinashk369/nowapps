@@ -19,6 +19,7 @@ class RetailerList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String retailerId = PreferenceUtils.getString(seletedRetailer);
     return BlocBuilder<ToggleIndexBloc, IndexToggled>(
         builder: (context, state) {
       return ListView.builder(
@@ -29,12 +30,11 @@ class RetailerList extends StatelessWidget {
             return ListTile(
               onTap: () {
                 onTap(retailers[index]);
-
+                retailerId = retailers[index].id!;
                 context.read<ToggleIndexBloc>().toggleState(index, false);
               },
               tileColor: (state.isSelected && state.index == index) ||
-                      retailers[index].id ==
-                          PreferenceUtils.getString(seletedRetailer)
+                      retailers[index].id == retailerId
                   ? Colors.grey[200]
                   : secondaryLight,
               title: Text(

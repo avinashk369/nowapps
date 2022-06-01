@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:mobilefirst/models/product/product_model.dart';
 import 'package:mobilefirst/styles/styles.dart';
 
-class ProductCard extends StatelessWidget {
-  const ProductCard({Key? key, required this.productModel}) : super(key: key);
+class CartCard extends StatelessWidget {
+  const CartCard({
+    Key? key,
+    required this.productModel,
+  }) : super(key: key);
   final ProductModel productModel;
 
   @override
@@ -56,25 +59,19 @@ class ProductCard extends StatelessWidget {
                   ),
                   Text(productModel.prodCode!),
                   Text(productModel.prodMrp!),
-                  StatefulBuilder(builder: (context, setter) {
+                  Builder(builder: (context) {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Flexible(
                           child: IconButton(
-                            onPressed: () {
-                              setter(() {
-                                productModel.count > 0
-                                    ? productModel.count--
-                                    : 0;
-                              });
-                            },
+                            onPressed: () => null,
                             icon: const Icon(Icons.remove_circle_outline),
                           ),
                         ),
                         Flexible(
                           child: Text(
-                            productModel.count.toString(),
+                            "1",
                             style: kLabelStyleBold.copyWith(
                               fontSize: 22,
                             ),
@@ -82,11 +79,7 @@ class ProductCard extends StatelessWidget {
                         ),
                         Flexible(
                           child: IconButton(
-                            onPressed: () {
-                              setter(() {
-                                productModel.count++;
-                              });
-                            },
+                            onPressed: () => null,
                             icon: const Icon(Icons.add_circle_outline),
                           ),
                         ),

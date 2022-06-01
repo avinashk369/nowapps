@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobilefirst/models/product/product_model.dart';
 import 'package:mobilefirst/screens/auth/verification/screens/user_verification.dart';
+import 'package:mobilefirst/screens/cart/cart_list.dart';
 import 'package:mobilefirst/screens/home.dart';
 import 'package:mobilefirst/screens/product/product_list.dart';
 import 'package:mobilefirst/screens/welcome.dart';
@@ -19,6 +20,8 @@ class RouteGenerator {
         return SlideRightRoute(page: const Home());
       case products:
         return SlideRightRoute(page: const ProductList());
+      case cartRoute:
+        return SlideRightRoute(page: const CartList());
       case otpRoute:
         Map<String, dynamic> data = args as Map<String, dynamic>;
 
