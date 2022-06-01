@@ -4,6 +4,7 @@ import 'package:mobilefirst/screens/auth/verification/screens/user_verification.
 import 'package:mobilefirst/screens/cart/cart_list.dart';
 import 'package:mobilefirst/screens/home.dart';
 import 'package:mobilefirst/screens/product/product_list.dart';
+import 'package:mobilefirst/screens/thank_you.dart';
 import 'package:mobilefirst/screens/welcome.dart';
 import 'package:mobilefirst/utils/slide_right_route.dart';
 
@@ -21,7 +22,12 @@ class RouteGenerator {
       case products:
         return SlideRightRoute(page: const ProductList());
       case cartRoute:
-        return SlideRightRoute(page: const CartList());
+        return SlideRightRoute(
+            page: CartList(
+          products: args as List<ProductModel>,
+        ));
+      case thankYouRoute:
+        return SlideRightRoute(page: const ThankYou());
       case otpRoute:
         Map<String, dynamic> data = args as Map<String, dynamic>;
 

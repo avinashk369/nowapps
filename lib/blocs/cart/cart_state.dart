@@ -29,9 +29,11 @@ class CartLoaded extends CartState {
 }
 
 class CartCountUpdated extends CartState {
-  final int count;
-  const CartCountUpdated({required this.count});
+  final List<ProductModel> products;
+  const CartCountUpdated({
+    required this.products,
+  });
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [products];
 }

@@ -13,6 +13,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
   CartBloc(this._productRepositoryImpl) : super(CartInitializing()) {
     on<LoadCart>((event, emit) => loadCart(event, emit));
+    on<AddToCart>((event, emit) => _addToCart(event, emit));
+    on<RemoveFromCart>((event, emit) => _removeFromCart(event, emit));
   }
 
   Future loadCart(LoadCart event, Emitter<CartState> emit) async {
@@ -23,5 +25,33 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     // } on ServerError catch (e) {
     //   emit(UserError(message: "No retailers found"));
     // }
+  }
+
+  Future _removeFromCart(RemoveFromCart event, Emitter<CartState> emit) async {
+    try {
+      final state = this.state;
+      if (state is CartCountUpdated) {
+        List<ProductModel> products = state.products
+            .where((pro) => pro.prodId != event.productModel.prodId)
+            .toList();
+        emit(CartCountUpdated(products: products));
+      }
+    } catch (e, stack) {
+      print("somethign wrong ${stack.toString()}");
+    }
+  }
+
+  Future _addToCart(AddToCart event, Emitter<CartState> emit) async {
+    try {
+      final state = this.state;
+      if (state is CartCountUpdated) {
+        emit(CartCountUpdated(
+            products: [...state.products, event.productModel]));
+      } else {
+        emit(CartCountUpdated(products: [event.productModel]));
+      }
+    } catch (e, stack) {
+      print("somethign wrong ${stack.toString()}");
+    }
   }
 }

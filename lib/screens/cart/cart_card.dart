@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobilefirst/blocs/cart/counter_bloc.dart';
 import 'package:mobilefirst/models/product/product_model.dart';
 import 'package:mobilefirst/styles/styles.dart';
 
@@ -59,19 +61,25 @@ class CartCard extends StatelessWidget {
                   ),
                   Text(productModel.prodCode!),
                   Text(productModel.prodMrp!),
-                  Builder(builder: (context) {
+                  StatefulBuilder(builder: (context, setter) {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Flexible(
                           child: IconButton(
-                            onPressed: () => null,
+                            onPressed: () {
+                              setter(() {
+                                productModel.count > 0
+                                    ? productModel.count--
+                                    : 0;
+                              });
+                            },
                             icon: const Icon(Icons.remove_circle_outline),
                           ),
                         ),
                         Flexible(
                           child: Text(
-                            "1",
+                            productModel.count.toString(),
                             style: kLabelStyleBold.copyWith(
                               fontSize: 22,
                             ),
@@ -79,7 +87,11 @@ class CartCard extends StatelessWidget {
                         ),
                         Flexible(
                           child: IconButton(
-                            onPressed: () => null,
+                            onPressed: () {
+                              setter(() {
+                                productModel.count++;
+                              });
+                            },
                             icon: const Icon(Icons.add_circle_outline),
                           ),
                         ),

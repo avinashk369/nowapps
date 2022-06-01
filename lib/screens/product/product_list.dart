@@ -1,42 +1,108 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobilefirst/blocs/cart/cartbloc.dart';
+import 'package:mobilefirst/blocs/index_toggled.dart';
 import 'package:mobilefirst/blocs/product/product_bloc.dart';
+import 'package:mobilefirst/blocs/toggle_index_bloc.dart';
+import 'package:mobilefirst/models/product/product_model.dart';
 import 'package:mobilefirst/repository/product/product_repositoryImpl.dart';
 import 'package:mobilefirst/routes/route_constants.dart';
+import 'package:mobilefirst/screens/product/product_item.dart';
+import 'package:mobilefirst/styles/styles.dart';
+import 'package:mobilefirst/utils/theme_constants.dart';
 import 'package:mobilefirst/widgets/custom_appbar.dart';
 
-import 'product_card.dart';
-
 class ProductList extends StatelessWidget {
-  const ProductList({Key? key}) : super(key: key);
+  const ProductList({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ProductBloc(context.read<ProductRepositoryImpl>())
-        ..add(const LoadPrdoucts()),
-      child: Scaffold(
-        appBar: const CustomAppBar(
-          title: "Products",
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ProductBloc>(
+          create: (context) =>
+              ProductBloc(context.read<ProductRepositoryImpl>())
+                ..add(
+                  const LoadPrdoucts(),
+                ),
         ),
-        body: BlocBuilder<ProductBloc, ProductState>(
-          builder: ((context, state) {
-            if (state is ProductLoaded) {
-              return ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                padding: EdgeInsets.zero,
-                itemBuilder: (context, index) {
-                  return ProductCard(
-                    productModel: state.products[index],
-                    onTap: (product) {},
-                  );
-                },
-                itemCount: state.products.length,
+        BlocProvider(
+            create: (context) =>
+                CartBloc(context.read<ProductRepositoryImpl>())),
+        BlocProvider(
+            create: (context) => ToggleIndexBloc(
+                  const IndexToggled(index: -1, isSelected: false),
+                ))
+      ],
+      child: Scaffold(
+        appBar: CustomAppBar(
+          title: "Products",
+          actions: [
+            BlocBuilder<CartBloc, CartState>(builder: (context, state) {
+              return Badge(
+                position: BadgePosition.topEnd(top: 0, end: 5),
+                animationDuration: const Duration(milliseconds: 300),
+                animationType: BadgeAnimationType.slide,
+                badgeContent: Text(
+                  (state is CartCountUpdated)
+                      ? state.products.length.toString()
+                      : "0",
+                  style: kLabelStyle.copyWith(color: secondaryLight),
+                ),
+                child: IconButton(
+                    icon: const Icon(Icons.shopping_cart),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(cartRoute,
+                          arguments: (state is CartCountUpdated)
+                              ? state.products
+                              : []);
+                    }),
               );
-            }
-            return const SizedBox.shrink();
-          }),
+            }),
+          ],
+        ),
+        body: CustomScrollView(
+          slivers: [
+            BlocBuilder<ProductBloc, ProductState>(
+              builder: ((context, state) {
+                context.watch<ProductBloc>().state;
+                if (state is ProductLoaded) {
+                  return SliverGrid(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        return StatefulBuilder(builder: (context, setState) {
+                          return ProductItem(
+                            index: index,
+                            productModel: state.products[index],
+                            addToCart: (product) {
+                              context.read<CartBloc>().add(AddToCart(product));
+                            },
+                            removeFromCart: (product) {
+                              context
+                                  .read<CartBloc>()
+                                  .add(RemoveFromCart(product));
+                            },
+                          );
+                        });
+                      },
+                      childCount: state.products.length,
+                    ),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 1,
+                      crossAxisSpacing: 1,
+                      childAspectRatio: .6,
+                    ),
+                  );
+                }
+                return const SliverToBoxAdapter(child: SizedBox.shrink());
+              }),
+            ),
+          ],
         ),
       ),
     );

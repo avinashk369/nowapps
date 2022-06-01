@@ -1,18 +1,23 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobilefirst/blocs/index_toggled.dart';
 import 'package:mobilefirst/blocs/product/productbloc.dart';
+import 'package:mobilefirst/blocs/toggle_index_bloc.dart';
 import 'package:mobilefirst/models/product/product_model.dart';
 import 'package:mobilefirst/styles/styles.dart';
+import 'package:mobilefirst/utils/theme_constants.dart';
 
 class ProductItem extends StatelessWidget {
   const ProductItem(
       {Key? key,
       required this.productModel,
       required this.addToCart,
-      required this.removeFromCart})
+      required this.removeFromCart,
+      required this.index})
       : super(key: key);
   final ProductModel productModel;
+  final int index;
   final Function(ProductModel product) addToCart;
   final Function(ProductModel product) removeFromCart;
   @override
@@ -35,6 +40,7 @@ class ProductItem extends StatelessWidget {
               elevation: 0,
               margin: EdgeInsets.zero,
               semanticContainer: true,
+              color: secondaryLight,
               clipBehavior: Clip.antiAliasWithSaveLayer,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(0.0),
@@ -66,39 +72,23 @@ class ProductItem extends StatelessWidget {
               ],
             ),
           )),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Flexible(
-                child: IconButton(
-                  onPressed: () {
-                    removeFromCart(productModel);
-                  },
-                  icon: const Icon(Icons.remove_circle_outline),
+          BlocBuilder<ProductBloc, ProductState>(builder: (context, state) {
+            return Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: primaryLight,
+                ),
+                onPressed: () {
+                  context.read<ToggleIndexBloc>().toggleState(index, false);
+                  addToCart(productModel);
+                },
+                child: Text(
+                  "Add to cart",
+                  style: kLabelStyleBold.copyWith(color: secondaryLight),
                 ),
               ),
-              Builder(builder: (context) {
-                context.watch<ProductBloc>().state;
-                return Flexible(
-                  child: Text(
-                    productModel.count.toString(),
-                    style: kLabelStyleBold.copyWith(
-                      fontSize: 22,
-                    ),
-                  ),
-                );
-              }),
-              Flexible(
-                child: IconButton(
-                  onPressed: () {
-                    addToCart(productModel);
-                    print(productModel.count);
-                  },
-                  icon: const Icon(Icons.add_circle_outline),
-                ),
-              ),
-            ],
-          ),
+            );
+          }),
         ],
       ),
     );

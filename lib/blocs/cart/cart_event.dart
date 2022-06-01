@@ -17,3 +17,17 @@ class CartCounter extends CartEvent {
   @override
   List<Object> get props => [];
 }
+
+class AddToCart extends CartEvent {
+  final ProductModel productModel;
+  const AddToCart(this.productModel);
+  @override
+  List<Object> get props => [productModel];
+}
+
+class RemoveFromCart extends CartEvent {
+  final ProductModel productModel;
+  const RemoveFromCart(this.productModel);
+  @override
+  List<Object> get props => [productModel];
+}
