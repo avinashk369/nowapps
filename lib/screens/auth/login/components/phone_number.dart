@@ -29,11 +29,10 @@ class PhoneNumber extends StatelessWidget {
                   child: CustomInput(
                     focusNode: FocusNode(),
                     hintText: phoneNumber,
-                    textController: TextEditingController(text: "954062191"),
+                    textController: TextEditingController(text: ""),
                     textInputType: TextInputType.phone,
                     onChanged: (value) => loginBloc.checkNumber(value),
-                    validator: (value) =>
-                        (value!.length < 10) ? "Invalid mobile number" : null,
+                    validator: FormValidator.contactValidator,
                     isPrefix: true,
                     hintTextStyle: kLabelStyle,
                     prefixWidget: Column(
