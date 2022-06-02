@@ -1,9 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobilefirst/blocs/index_toggled.dart';
 import 'package:mobilefirst/blocs/product/productbloc.dart';
-import 'package:mobilefirst/blocs/toggle_index_bloc.dart';
 import 'package:mobilefirst/models/product/product_model.dart';
 import 'package:mobilefirst/styles/styles.dart';
 import 'package:mobilefirst/utils/theme_constants.dart';
@@ -72,23 +70,41 @@ class ProductItem extends StatelessWidget {
               ],
             ),
           )),
-          BlocBuilder<ProductBloc, ProductState>(builder: (context, state) {
-            return Center(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  primary: primaryLight,
-                ),
-                onPressed: () {
-                  context.read<ToggleIndexBloc>().toggleState(index, false);
-                  addToCart(productModel);
-                },
-                child: Text(
-                  "Add to cart",
-                  style: kLabelStyleBold.copyWith(color: secondaryLight),
-                ),
-              ),
-            );
-          }),
+          BlocBuilder<ProductBloc, ProductState>(
+            builder: ((context, state) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Flexible(
+                    child: IconButton(
+                      onPressed: () {
+                        removeFromCart(productModel.copyWith(
+                            count: productModel.count > 1
+                                ? productModel.count - 1
+                                : 1));
+                      },
+                      icon: const Icon(Icons.remove_circle_outline),
+                    ),
+                  ),
+                  Flexible(
+                    child: Text(
+                      productModel.count.toString(),
+                      style: kLabelStyleBold.copyWith(
+                        fontSize: 22,
+                      ),
+                    ),
+                  ),
+                  Flexible(
+                    child: IconButton(
+                      onPressed: () => addToCart(
+                          productModel.copyWith(count: productModel.count + 1)),
+                      icon: const Icon(Icons.add_circle_outline),
+                    ),
+                  ),
+                ],
+              );
+            }),
+          ),
         ],
       ),
     );

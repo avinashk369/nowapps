@@ -17,6 +17,44 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
   ProductBloc(this._productRepositoryImpl) : super(ProductInitializing()) {
     on<LoadPrdoucts>((event, emit) => _loadProducts(event, emit));
+    on<RemoveProduct>((event, emit) => _removeProduct(event, emit));
+    on<AddProduct>((event, emit) => _addProduct(event, emit));
+  }
+  Future _addProduct(AddProduct event, Emitter<ProductState> emit) async {
+    try {
+      final state = this.state;
+      if (state is ProductLoaded) {
+        List<ProductModel> products = state.products
+            .map((e) =>
+                e.prodId == event.productModel.prodId ? event.productModel : e)
+            .toList();
+        emit(state.copyWith(products: products));
+      }
+    } catch (e) {
+      emit(ProductError(message: "Something went wrong"));
+    }
+  }
+
+  Future _removeProduct(RemoveProduct event, Emitter<ProductState> emit) async {
+    try {
+      final state = this.state;
+      if (state is ProductLoaded) {
+        // List<ProductModel> products = List.from(state.products);
+        // final int index = products.indexWhere(
+        //     (element) => element.prodId == event.productModel.prodId);
+        //products.removeAt(index);
+        // products.add(
+        //     event.productModel.copyWith(count: event.productModel.count++));
+        // emit(ProductLoaded(products: products));
+        List<ProductModel> products = state.products
+            .map((e) =>
+                e.prodId == event.productModel.prodId ? event.productModel : e)
+            .toList();
+        emit(state.copyWith(products: products));
+      }
+    } catch (e) {
+      emit(ProductError(message: "Something went wrong"));
+    }
   }
 
   Future _loadProducts(LoadPrdoucts event, Emitter<ProductState> emit) async {
@@ -24,7 +62,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       bool dbStats = PreferenceUtils.getBool(dbSync);
       if (dbStats) {
         List<ProductModel> products = await DbHeler.instance.getProducts();
-        print("product from local db ${products.length}");
+
         emit(ProductLoaded(products: products));
       } else {
         ResponseModel responseModel =

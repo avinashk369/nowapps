@@ -38,8 +38,8 @@ class ProductList extends StatelessWidget {
                 ))
       ],
       child: Scaffold(
-        appBar: CustomAppBar(
-          title: "Products",
+        appBar: AppBar(
+          title: const Text("Products"),
           actions: [
             BlocBuilder<CartBloc, CartState>(builder: (context, state) {
               return Badge(
@@ -68,7 +68,6 @@ class ProductList extends StatelessWidget {
           slivers: [
             BlocBuilder<ProductBloc, ProductState>(
               builder: ((context, state) {
-                context.watch<ProductBloc>().state;
                 if (state is ProductLoaded) {
                   return SliverGrid(
                     delegate: SliverChildBuilderDelegate(
@@ -78,12 +77,14 @@ class ProductList extends StatelessWidget {
                             index: index,
                             productModel: state.products[index],
                             addToCart: (product) {
-                              context.read<CartBloc>().add(AddToCart(product));
+                              context
+                                  .read<ProductBloc>()
+                                  .add(AddProduct(product));
                             },
                             removeFromCart: (product) {
                               context
-                                  .read<CartBloc>()
-                                  .add(RemoveFromCart(product));
+                                  .read<ProductBloc>()
+                                  .add(RemoveProduct(product));
                             },
                           );
                         });

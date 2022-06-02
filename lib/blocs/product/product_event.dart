@@ -10,3 +10,17 @@ class LoadPrdoucts extends ProductEvent {
   @override
   List<Object> get props => [];
 }
+
+class RemoveProduct extends ProductEvent {
+  final ProductModel productModel;
+  const RemoveProduct(this.productModel);
+  @override
+  List<Object> get props => [productModel];
+}
+
+class AddProduct extends ProductEvent {
+  final ProductModel productModel;
+  const AddProduct(this.productModel);
+  @override
+  List<Object> get props => [productModel];
+}
