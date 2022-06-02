@@ -25,19 +25,23 @@ class ProductError extends ProductState {
 
 class ProductLoaded extends ProductState {
   final List<ProductModel> products;
+  final List<ProductModel>? addedProducts;
 
   const ProductLoaded({
     required this.products,
+    this.addedProducts,
   });
 
   ProductLoaded copyWith({
     List<ProductModel>? products,
+    List<ProductModel>? addedProducts,
   }) {
     return ProductLoaded(
       products: products ?? this.products,
+      addedProducts: addedProducts ?? this.addedProducts,
     );
   }
 
   @override
-  List<Object> get props => [products];
+  List<Object> get props => [products, addedProducts!];
 }

@@ -43,6 +43,14 @@ class CartList extends StatelessWidget {
                     itemBuilder: (context, index) {
                       return CartCard(
                         productModel: products[index],
+                        addToCart: (product) {
+                          context.read<ProductBloc>().add(AddProduct(product));
+                        },
+                        removeFromCart: (product) {
+                          context
+                              .read<ProductBloc>()
+                              .add(RemoveProduct(product));
+                        },
                       );
                     },
                     itemCount: products.length,

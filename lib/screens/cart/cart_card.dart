@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobilefirst/blocs/cart/counter_bloc.dart';
+import 'package:mobilefirst/blocs/product/productbloc.dart';
 import 'package:mobilefirst/models/product/product_model.dart';
 import 'package:mobilefirst/styles/styles.dart';
 
@@ -9,9 +9,12 @@ class CartCard extends StatelessWidget {
   const CartCard({
     Key? key,
     required this.productModel,
+    required this.addToCart,
+    required this.removeFromCart,
   }) : super(key: key);
   final ProductModel productModel;
-
+  final Function(ProductModel product) addToCart;
+  final Function(ProductModel product) removeFromCart;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -61,43 +64,41 @@ class CartCard extends StatelessWidget {
                   ),
                   Text(productModel.prodCode!),
                   Text(productModel.prodMrp!),
-                  StatefulBuilder(builder: (context, setter) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Flexible(
-                          child: IconButton(
-                            onPressed: () {
-                              setter(() {
-                                productModel.count > 0
-                                    ? productModel.count--
-                                    : 0;
-                              });
-                            },
-                            icon: const Icon(Icons.remove_circle_outline),
-                          ),
-                        ),
-                        Flexible(
-                          child: Text(
-                            productModel.count.toString(),
-                            style: kLabelStyleBold.copyWith(
-                              fontSize: 22,
+                  BlocBuilder<ProductBloc, ProductState>(
+                    builder: ((context, state) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Flexible(
+                            child: IconButton(
+                              onPressed: () {
+                                removeFromCart(productModel.copyWith(
+                                    count: productModel.count > 1
+                                        ? productModel.count - 1
+                                        : 1));
+                              },
+                              icon: const Icon(Icons.remove_circle_outline),
                             ),
                           ),
-                        ),
-                        Flexible(
-                          child: IconButton(
-                            onPressed: () {
-                              setter(() {
-                                productModel.count++;
-                              });
-                            },
-                            icon: const Icon(Icons.add_circle_outline),
+                          Flexible(
+                            child: Text(
+                              productModel.count.toString(),
+                              style: kLabelStyleBold.copyWith(
+                                fontSize: 22,
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
-                    );
-                  })
+                          Flexible(
+                            child: IconButton(
+                              onPressed: () => addToCart(productModel.copyWith(
+                                  count: productModel.count + 1)),
+                              icon: const Icon(Icons.add_circle_outline),
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
+                  ),
                 ],
               ),
             ),

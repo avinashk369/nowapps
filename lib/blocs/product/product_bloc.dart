@@ -24,13 +24,19 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     try {
       final state = this.state;
       if (state is ProductLoaded) {
+        List<ProductModel> addedProduct = state.addedProducts ?? [];
+        List<ProductModel> cartProducts = addedProduct
+            .where((element) => element.prodId != event.productModel.prodId)
+            .toList();
+        cartProducts.add(event.productModel);
         List<ProductModel> products = state.products
             .map((e) =>
                 e.prodId == event.productModel.prodId ? event.productModel : e)
             .toList();
-        emit(state.copyWith(products: products));
+        emit(state.copyWith(products: products, addedProducts: cartProducts));
       }
-    } catch (e) {
+    } catch (e, stac) {
+      print("stack trace ${stac.toString()}");
       emit(ProductError(message: "Something went wrong"));
     }
   }
@@ -46,11 +52,17 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         // products.add(
         //     event.productModel.copyWith(count: event.productModel.count++));
         // emit(ProductLoaded(products: products));
+        List<ProductModel> addedProduct = state.addedProducts ?? [];
+        List<ProductModel> cartProducts = addedProduct
+            .where((element) => element.prodId != event.productModel.prodId)
+            .toList();
+        cartProducts.remove(event.productModel);
+
         List<ProductModel> products = state.products
             .map((e) =>
                 e.prodId == event.productModel.prodId ? event.productModel : e)
             .toList();
-        emit(state.copyWith(products: products));
+        emit(state.copyWith(products: products, addedProducts: cartProducts));
       }
     } catch (e) {
       emit(ProductError(message: "Something went wrong"));
@@ -63,13 +75,14 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       if (dbStats) {
         List<ProductModel> products = await DbHeler.instance.getProducts();
 
-        emit(ProductLoaded(products: products));
+        emit(ProductLoaded(products: products, addedProducts: []));
       } else {
         ResponseModel responseModel =
             await _productRepositoryImpl.loadProducts();
         await DbHeler.instance.insertProducts(responseModel.data!.products!);
         PreferenceUtils.putBool(dbSync, true);
-        emit(ProductLoaded(products: responseModel.data!.products!));
+        emit(ProductLoaded(
+            products: responseModel.data!.products!, addedProducts: []));
       }
     } on ServerError catch (e) {
       emit(ProductError(message: e.getErrorMessage()));

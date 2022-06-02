@@ -41,14 +41,14 @@ class ProductList extends StatelessWidget {
         appBar: AppBar(
           title: const Text("Products"),
           actions: [
-            BlocBuilder<CartBloc, CartState>(builder: (context, state) {
+            BlocBuilder<ProductBloc, ProductState>(builder: (context, state) {
               return Badge(
                 position: BadgePosition.topEnd(top: 0, end: 5),
                 animationDuration: const Duration(milliseconds: 300),
                 animationType: BadgeAnimationType.slide,
                 badgeContent: Text(
-                  (state is CartCountUpdated)
-                      ? state.products.length.toString()
+                  (state is ProductLoaded)
+                      ? state.addedProducts!.length.toString()
                       : "0",
                   style: kLabelStyle.copyWith(color: secondaryLight),
                 ),
@@ -56,8 +56,8 @@ class ProductList extends StatelessWidget {
                     icon: const Icon(Icons.shopping_cart),
                     onPressed: () {
                       Navigator.of(context).pushNamed(cartRoute,
-                          arguments: (state is CartCountUpdated)
-                              ? state.products
+                          arguments: (state is ProductLoaded)
+                              ? state.addedProducts
                               : []);
                     }),
               );
@@ -72,22 +72,20 @@ class ProductList extends StatelessWidget {
                   return SliverGrid(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
-                        return StatefulBuilder(builder: (context, setState) {
-                          return ProductItem(
-                            index: index,
-                            productModel: state.products[index],
-                            addToCart: (product) {
-                              context
-                                  .read<ProductBloc>()
-                                  .add(AddProduct(product));
-                            },
-                            removeFromCart: (product) {
-                              context
-                                  .read<ProductBloc>()
-                                  .add(RemoveProduct(product));
-                            },
-                          );
-                        });
+                        return ProductItem(
+                          index: index,
+                          productModel: state.products[index],
+                          addToCart: (product) {
+                            context
+                                .read<ProductBloc>()
+                                .add(AddProduct(product));
+                          },
+                          removeFromCart: (product) {
+                            context
+                                .read<ProductBloc>()
+                                .add(RemoveProduct(product));
+                          },
+                        );
                       },
                       childCount: state.products.length,
                     ),
