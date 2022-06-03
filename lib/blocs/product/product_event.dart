@@ -20,7 +20,8 @@ class RemoveProduct extends ProductEvent {
 
 class AddProduct extends ProductEvent {
   final ProductModel productModel;
-  const AddProduct(this.productModel);
+  final bool isCart;
+  const AddProduct({required this.productModel, required this.isCart});
   @override
   List<Object> get props => [productModel];
 }

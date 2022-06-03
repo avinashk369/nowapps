@@ -74,9 +74,8 @@ class ProductList extends StatelessWidget {
                           index: index,
                           productModel: state.products[index],
                           addToCart: (product) {
-                            context
-                                .read<ProductBloc>()
-                                .add(AddProduct(product));
+                            context.read<ProductBloc>().add(AddProduct(
+                                productModel: product, isCart: false));
                           },
                           removeFromCart: (product) {
                             context

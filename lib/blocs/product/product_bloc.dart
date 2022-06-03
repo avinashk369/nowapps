@@ -24,12 +24,20 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   Future _addProduct(AddProduct event, Emitter<ProductState> emit) async {
     try {
       final state = this.state;
+      List<ProductModel> cartProducts = [];
       if (state is ProductLoaded) {
-        List<ProductModel> addedProduct = state.addedProducts ?? [];
-        List<ProductModel> cartProducts = addedProduct
-            .where((element) => element.prodId != event.productModel.prodId)
-            .toList();
-        cartProducts.add(event.productModel);
+        if (event.isCart) {
+          cartProducts = state.addedProducts!
+              .map((e) => e.prodId == event.productModel.prodId
+                  ? event.productModel
+                  : e)
+              .toList();
+        } else {
+          cartProducts = state.addedProducts!
+              .where((element) => element.prodId != event.productModel.prodId)
+              .toList();
+          cartProducts.add(event.productModel);
+        }
         List<ProductModel> products = state.products
             .map((e) =>
                 e.prodId == event.productModel.prodId ? event.productModel : e)

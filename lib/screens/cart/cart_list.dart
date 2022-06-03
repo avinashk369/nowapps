@@ -36,7 +36,8 @@ class CartList extends StatelessWidget {
                               productBloc: productBloc,
                               productModel: state.addedProducts![index],
                               addToCart: (product) {
-                                productBloc.add(AddProduct(product));
+                                productBloc.add(AddProduct(
+                                    productModel: product, isCart: true));
                               },
                               removeFromCart: (product) {
                                 productBloc.add(RemoveProduct(product));
