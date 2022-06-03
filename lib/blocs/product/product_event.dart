@@ -24,3 +24,10 @@ class AddProduct extends ProductEvent {
   @override
   List<Object> get props => [productModel];
 }
+
+class DeleteProduct extends ProductEvent {
+  final ProductModel productModel;
+  const DeleteProduct(this.productModel);
+  @override
+  List<Object> get props => [productModel];
+}

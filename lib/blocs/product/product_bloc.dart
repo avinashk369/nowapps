@@ -19,6 +19,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<LoadPrdoucts>((event, emit) => _loadProducts(event, emit));
     on<RemoveProduct>((event, emit) => _removeProduct(event, emit));
     on<AddProduct>((event, emit) => _addProduct(event, emit));
+    on<DeleteProduct>((event, emit) => _deleteFromCart(event, emit));
   }
   Future _addProduct(AddProduct event, Emitter<ProductState> emit) async {
     try {
@@ -45,24 +46,32 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     try {
       final state = this.state;
       if (state is ProductLoaded) {
-        // List<ProductModel> products = List.from(state.products);
-        // final int index = products.indexWhere(
-        //     (element) => element.prodId == event.productModel.prodId);
-        //products.removeAt(index);
-        // products.add(
-        //     event.productModel.copyWith(count: event.productModel.count++));
-        // emit(ProductLoaded(products: products));
-        List<ProductModel> addedProduct = state.addedProducts ?? [];
-        List<ProductModel> cartProducts = addedProduct
-            .where((element) => element.prodId != event.productModel.prodId)
-            .toList();
-        cartProducts.remove(event.productModel);
-
         List<ProductModel> products = state.products
             .map((e) =>
                 e.prodId == event.productModel.prodId ? event.productModel : e)
             .toList();
+        List<ProductModel> cartProducts = state.addedProducts!
+            .map((e) =>
+                e.prodId == event.productModel.prodId ? event.productModel : e)
+            .toList();
         emit(state.copyWith(products: products, addedProducts: cartProducts));
+      }
+    } catch (e) {
+      emit(ProductError(message: "Something went wrong"));
+    }
+  }
+
+  Future _deleteFromCart(
+      DeleteProduct event, Emitter<ProductState> emit) async {
+    try {
+      final state = this.state;
+      if (state is ProductLoaded) {
+        List<ProductModel> cartProducts = state.addedProducts!
+            .where((element) => element.prodId != event.productModel.prodId)
+            .toList();
+
+        emit(state.copyWith(
+            products: state.products, addedProducts: cartProducts));
       }
     } catch (e) {
       emit(ProductError(message: "Something went wrong"));

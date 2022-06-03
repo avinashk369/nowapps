@@ -12,10 +12,12 @@ class CartCard extends StatelessWidget {
     required this.addToCart,
     required this.removeFromCart,
     required this.productBloc,
+    required this.deleteFromCart,
   }) : super(key: key);
   final ProductModel productModel;
   final Function(ProductModel product) addToCart;
   final Function(ProductModel product) removeFromCart;
+  final Function(ProductModel product) deleteFromCart;
   final ProductBloc productBloc;
   @override
   Widget build(BuildContext context) {
@@ -75,7 +77,9 @@ class CartCard extends StatelessWidget {
                           Flexible(
                             child: productModel.count < 1
                                 ? IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      deleteFromCart(productModel);
+                                    },
                                     icon: const Icon(Icons.delete),
                                   )
                                 : IconButton(

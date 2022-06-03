@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobilefirst/blocs/cart/counter_bloc.dart';
-import 'package:mobilefirst/models/product/product_model.dart';
-import 'package:mobilefirst/repository/product/product_repositoryImpl.dart';
 import 'package:mobilefirst/routes/route_constants.dart';
 import 'package:mobilefirst/styles/styles.dart';
 import 'package:mobilefirst/utils/theme_constants.dart';
@@ -44,6 +41,9 @@ class CartList extends StatelessWidget {
                               removeFromCart: (product) {
                                 productBloc.add(RemoveProduct(product));
                               },
+                              deleteFromCart: (product) {
+                                productBloc.add(DeleteProduct(product));
+                              },
                             );
                           },
                           itemCount: state.addedProducts!.length,
@@ -56,33 +56,44 @@ class CartList extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: products.isEmpty ? Colors.grey[400] : primaryLight,
-        child: SizedBox(
-          height: kToolbarHeight,
-          child: InkWell(
-            onTap: products.isEmpty
-                ? null
-                : () {
-                    Navigator.of(context).pushNamed(thankYouRoute);
-                    PreferenceUtils.putString(seletedRetailer, "");
-                  },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Check Out".toUpperCase(),
-                  textAlign: TextAlign.center,
-                  style: kLabelStyleBold.copyWith(
-                      color:
-                          products.isEmpty ? Colors.grey[100] : secondaryLight,
-                      fontSize: 18),
+      bottomNavigationBar: BlocBuilder<ProductBloc, ProductState>(
+          bloc: productBloc,
+          builder: (context, state) {
+            return BottomAppBar(
+              color: (state is ProductLoaded)
+                  ? state.addedProducts!.isEmpty
+                      ? Colors.grey[400]
+                      : primaryLight
+                  : Colors.grey[400],
+              child: SizedBox(
+                height: kToolbarHeight,
+                child: InkWell(
+                  onTap: (state is ProductLoaded)
+                      ? state.addedProducts!.isEmpty
+                          ? null
+                          : () {
+                              Navigator.of(context).pushNamed(thankYouRoute);
+                              PreferenceUtils.putString(seletedRetailer, "");
+                            }
+                      : null,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Check Out".toUpperCase(),
+                        textAlign: TextAlign.center,
+                        style: kLabelStyleBold.copyWith(
+                            color: products.isEmpty
+                                ? Colors.grey[100]
+                                : secondaryLight,
+                            fontSize: 18),
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-        ),
-      ),
+              ),
+            );
+          }),
     );
   }
 }
