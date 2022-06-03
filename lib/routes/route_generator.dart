@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobilefirst/blocs/product/product_bloc.dart';
 import 'package:mobilefirst/models/product/product_model.dart';
 import 'package:mobilefirst/screens/auth/verification/screens/user_verification.dart';
 import 'package:mobilefirst/screens/cart/cart_list.dart';
@@ -24,7 +25,7 @@ class RouteGenerator {
       case cartRoute:
         return SlideRightRoute(
             page: CartList(
-          products: args as List<ProductModel>,
+          productBloc: args as ProductBloc,
         ));
       case thankYouRoute:
         return SlideRightRoute(page: const ThankYou());

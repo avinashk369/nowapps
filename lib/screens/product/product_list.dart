@@ -56,9 +56,7 @@ class ProductList extends StatelessWidget {
                     icon: const Icon(Icons.shopping_cart),
                     onPressed: () {
                       Navigator.of(context).pushNamed(cartRoute,
-                          arguments: (state is ProductLoaded)
-                              ? state.addedProducts
-                              : []);
+                          arguments: context.read<ProductBloc>());
                     }),
               );
             }),

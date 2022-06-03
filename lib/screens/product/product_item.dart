@@ -76,15 +76,20 @@ class ProductItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Flexible(
-                    child: IconButton(
-                      onPressed: () {
-                        removeFromCart(productModel.copyWith(
-                            count: productModel.count > 1
-                                ? productModel.count - 1
-                                : 1));
-                      },
-                      icon: const Icon(Icons.remove_circle_outline),
-                    ),
+                    child: productModel.count < 1
+                        ? IconButton(
+                            onPressed: () {},
+                            icon: const Icon(Icons.delete),
+                          )
+                        : IconButton(
+                            onPressed: () {
+                              removeFromCart(productModel.copyWith(
+                                  count: productModel.count > 1
+                                      ? productModel.count - 1
+                                      : 0));
+                            },
+                            icon: const Icon(Icons.remove_circle_outline),
+                          ),
                   ),
                   Flexible(
                     child: Text(

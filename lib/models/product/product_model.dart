@@ -22,7 +22,7 @@ class ProductModel extends Equatable {
   @JsonKey(name: 'prodMrp')
   String? prodMrp;
   //@JsonKey(ignore: true)
-  int count = 1;
+  int count = 0;
   ProductModel({
     this.prodImage,
     this.prodId,
@@ -33,7 +33,7 @@ class ProductModel extends Equatable {
     this.prodShortName,
     this.prodPrice,
     this.prodMrp,
-    this.count = 1,
+    this.count = 0,
   });
   ProductModel copyWith({
     String? prodImage,
@@ -45,7 +45,7 @@ class ProductModel extends Equatable {
     String? prodShortName,
     String? prodPrice,
     String? prodMrp,
-    int count = 1,
+    int count = 0,
   }) =>
       ProductModel(
         prodImage: prodImage ?? this.prodImage,

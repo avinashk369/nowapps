@@ -16,7 +16,7 @@ ProductModel _$ProductModelFromJson(Map<String, dynamic> json) => ProductModel(
       prodShortName: json['prodShortName'] as String?,
       prodPrice: json['prod_price'] as String?,
       prodMrp: json['prodMrp'] as String?,
-      count: json['count'] as int? ?? 1,
+      count: json['count'] as int? ?? 0,
     );
 
 Map<String, dynamic> _$ProductModelToJson(ProductModel instance) {

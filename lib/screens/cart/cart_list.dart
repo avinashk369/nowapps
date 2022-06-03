@@ -12,8 +12,8 @@ import '../../blocs/product/productbloc.dart';
 import 'cart_card.dart';
 
 class CartList extends StatelessWidget {
-  const CartList({Key? key, required this.products}) : super(key: key);
-  final List<ProductModel> products;
+  const CartList({Key? key, required this.productBloc}) : super(key: key);
+  final ProductBloc productBloc;
 
   @override
   Widget build(BuildContext context) {
@@ -36,25 +36,30 @@ class CartList extends StatelessWidget {
             SliverList(
               delegate: SliverChildListDelegate(
                 [
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.zero,
-                    itemBuilder: (context, index) {
-                      return CartCard(
-                        productModel: products[index],
-                        addToCart: (product) {
-                          context.read<ProductBloc>().add(AddProduct(product));
-                        },
-                        removeFromCart: (product) {
-                          context
-                              .read<ProductBloc>()
-                              .add(RemoveProduct(product));
-                        },
-                      );
-                    },
-                    itemCount: products.length,
-                  ),
+                  BlocBuilder(
+                      bloc: productBloc,
+                      builder: (context, state) {
+                        if (state is ProductLoaded) {
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: EdgeInsets.zero,
+                            itemBuilder: (context, index) {
+                              return CartCard(
+                                productModel: state.addedProducts![index],
+                                addToCart: (product) {
+                                  productBloc.add(AddProduct(product));
+                                },
+                                removeFromCart: (product) {
+                                  productBloc.add(RemoveProduct(product));
+                                },
+                              );
+                            },
+                            itemCount: state.addedProducts!.length,
+                          );
+                        }
+                        return const SizedBox.shrink();
+                      }),
                 ],
               ),
             ),
