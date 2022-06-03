@@ -11,10 +11,12 @@ class CartCard extends StatelessWidget {
     required this.productModel,
     required this.addToCart,
     required this.removeFromCart,
+    required this.productBloc,
   }) : super(key: key);
   final ProductModel productModel;
   final Function(ProductModel product) addToCart;
   final Function(ProductModel product) removeFromCart;
+  final ProductBloc productBloc;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -65,20 +67,27 @@ class CartCard extends StatelessWidget {
                   Text(productModel.prodCode!),
                   Text(productModel.prodMrp!),
                   BlocBuilder<ProductBloc, ProductState>(
+                    bloc: productBloc,
                     builder: ((context, state) {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Flexible(
-                            child: IconButton(
-                              onPressed: () {
-                                removeFromCart(productModel.copyWith(
-                                    count: productModel.count > 1
-                                        ? productModel.count - 1
-                                        : 1));
-                              },
-                              icon: const Icon(Icons.remove_circle_outline),
-                            ),
+                            child: productModel.count < 1
+                                ? IconButton(
+                                    onPressed: () {},
+                                    icon: const Icon(Icons.delete),
+                                  )
+                                : IconButton(
+                                    onPressed: () {
+                                      removeFromCart(productModel.copyWith(
+                                          count: productModel.count > 1
+                                              ? productModel.count - 1
+                                              : 0));
+                                    },
+                                    icon:
+                                        const Icon(Icons.remove_circle_outline),
+                                  ),
                           ),
                           Flexible(
                             child: Text(

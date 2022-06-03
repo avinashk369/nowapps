@@ -17,79 +17,68 @@ class CartList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) =>
-              ProductBloc(context.read<ProductRepositoryImpl>()),
-        ),
-        BlocProvider(
-          create: (context) => CounterBloc(),
-        ),
-      ],
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Cart"),
-        ),
-        body: CustomScrollView(
-          slivers: [
-            SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  BlocBuilder(
-                      bloc: productBloc,
-                      builder: (context, state) {
-                        if (state is ProductLoaded) {
-                          return ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            padding: EdgeInsets.zero,
-                            itemBuilder: (context, index) {
-                              return CartCard(
-                                productModel: state.addedProducts![index],
-                                addToCart: (product) {
-                                  productBloc.add(AddProduct(product));
-                                },
-                                removeFromCart: (product) {
-                                  productBloc.add(RemoveProduct(product));
-                                },
-                              );
-                            },
-                            itemCount: state.addedProducts!.length,
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      }),
-                ],
-              ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Cart"),
+      ),
+      body: CustomScrollView(
+        slivers: [
+          SliverList(
+            delegate: SliverChildListDelegate(
+              [
+                BlocBuilder<ProductBloc, ProductState>(
+                    bloc: productBloc,
+                    builder: (context, state) {
+                      if (state is ProductLoaded) {
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: EdgeInsets.zero,
+                          itemBuilder: (context, index) {
+                            return CartCard(
+                              productBloc: productBloc,
+                              productModel: state.addedProducts![index],
+                              addToCart: (product) {
+                                productBloc.add(AddProduct(product));
+                              },
+                              removeFromCart: (product) {
+                                productBloc.add(RemoveProduct(product));
+                              },
+                            );
+                          },
+                          itemCount: state.addedProducts!.length,
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    }),
+              ],
             ),
-          ],
-        ),
-        bottomNavigationBar: BottomAppBar(
-          color: products.isEmpty ? Colors.grey[400] : primaryLight,
-          child: SizedBox(
-            height: kToolbarHeight,
-            child: InkWell(
-              onTap: products.isEmpty
-                  ? null
-                  : () {
-                      Navigator.of(context).pushNamed(thankYouRoute);
-                      PreferenceUtils.putString(seletedRetailer, "");
-                    },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Check Out".toUpperCase(),
-                    textAlign: TextAlign.center,
-                    style: kLabelStyleBold.copyWith(
-                        color: products.isEmpty
-                            ? Colors.grey[100]
-                            : secondaryLight,
-                        fontSize: 18),
-                  ),
-                ],
-              ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: products.isEmpty ? Colors.grey[400] : primaryLight,
+        child: SizedBox(
+          height: kToolbarHeight,
+          child: InkWell(
+            onTap: products.isEmpty
+                ? null
+                : () {
+                    Navigator.of(context).pushNamed(thankYouRoute);
+                    PreferenceUtils.putString(seletedRetailer, "");
+                  },
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Check Out".toUpperCase(),
+                  textAlign: TextAlign.center,
+                  style: kLabelStyleBold.copyWith(
+                      color:
+                          products.isEmpty ? Colors.grey[100] : secondaryLight,
+                      fontSize: 18),
+                ),
+              ],
             ),
           ),
         ),
