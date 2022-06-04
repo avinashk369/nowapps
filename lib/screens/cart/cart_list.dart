@@ -60,6 +60,12 @@ class CartList extends StatelessWidget {
       bottomNavigationBar: BlocBuilder<ProductBloc, ProductState>(
           bloc: productBloc,
           builder: (context, state) {
+            double total = 0;
+            if (state is ProductLoaded) {
+              total = state.addedProducts!.fold(0, (sum, product) {
+                return sum + double.parse(product.prodMrp!) * product.count;
+              });
+            }
             return BottomAppBar(
               color: (state is ProductLoaded)
                   ? state.addedProducts!.isEmpty
@@ -73,6 +79,7 @@ class CartList extends StatelessWidget {
                       ? state.addedProducts!.isEmpty
                           ? null
                           : () {
+                              // product list and their total price can be shared to navigation screen
                               Navigator.of(context).pushNamed(thankYouRoute);
                               PreferenceUtils.putString(seletedRetailer, "");
                             }
@@ -86,7 +93,7 @@ class CartList extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Total - \u{20B9}${(state is ProductLoaded) ? state.products.fold(0, (acc, product) => (acc as dynamic) + double.parse(product.prodMrp!) * product.count).toString() : 0.toString()}",
+                              "Total - \u{20B9}$total",
                               style: kLabelStyleBold.copyWith(
                                 color: secondaryLight,
                                 fontSize: 18,
