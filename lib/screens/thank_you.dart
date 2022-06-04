@@ -8,30 +8,37 @@ class ThankYou extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: greenColor,
-      appBar: AppBar(
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+            dashboardRoute, (Route<dynamic> route) => false);
+        return true;
+      },
+      child: Scaffold(
         backgroundColor: greenColor,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.close,
-            color: secondaryLight,
+        appBar: AppBar(
+          backgroundColor: greenColor,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.close,
+              color: secondaryLight,
+            ),
+            onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
+                dashboardRoute, (Route<dynamic> route) => false),
           ),
-          onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
-              dashboardRoute, (Route<dynamic> route) => false),
         ),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Order has been placed",
-            textAlign: TextAlign.center,
-            style:
-                kLabelStyleBold.copyWith(color: secondaryLight, fontSize: 25),
-          )
-        ],
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Order has been placed",
+              textAlign: TextAlign.center,
+              style:
+                  kLabelStyleBold.copyWith(color: secondaryLight, fontSize: 25),
+            )
+          ],
+        ),
       ),
     );
   }

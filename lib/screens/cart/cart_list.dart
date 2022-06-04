@@ -80,14 +80,30 @@ class CartList extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        "Check Out".toUpperCase(),
-                        textAlign: TextAlign.center,
-                        style: kLabelStyleBold.copyWith(
-                            color: products.isEmpty
-                                ? Colors.grey[100]
-                                : secondaryLight,
-                            fontSize: 18),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Total - \u{20B9}${(state is ProductLoaded) ? state.products.fold(0, (acc, product) => (acc as dynamic) + double.parse(product.prodMrp!) * product.count).toString() : 0.toString()}",
+                              style: kLabelStyleBold.copyWith(
+                                color: secondaryLight,
+                                fontSize: 18,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                            Text(
+                              "Check Out".toUpperCase(),
+                              textAlign: TextAlign.center,
+                              style: kLabelStyleBold.copyWith(
+                                  color: products.isEmpty
+                                      ? Colors.grey[100]
+                                      : secondaryLight,
+                                  fontSize: 18),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
