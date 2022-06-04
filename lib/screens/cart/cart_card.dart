@@ -79,6 +79,8 @@ class CartCard extends StatelessWidget {
                             child: productModel.count < 2
                                 ? IconButton(
                                     onPressed: () {
+                                      removeFromCart(
+                                          productModel.copyWith(count: 0));
                                       deleteFromCart(productModel);
                                     },
                                     icon: const Icon(
