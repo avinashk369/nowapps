@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobilefirst/blocs/product/productbloc.dart';
 import 'package:mobilefirst/models/product/product_model.dart';
 import 'package:mobilefirst/styles/styles.dart';
+import 'package:mobilefirst/utils/theme_constants.dart';
 
 class CartCard extends StatelessWidget {
   const CartCard({
@@ -75,12 +76,15 @@ class CartCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Flexible(
-                            child: productModel.count < 1
+                            child: productModel.count < 2
                                 ? IconButton(
                                     onPressed: () {
                                       deleteFromCart(productModel);
                                     },
-                                    icon: const Icon(Icons.delete),
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: redColor,
+                                    ),
                                   )
                                 : IconButton(
                                     onPressed: () {
