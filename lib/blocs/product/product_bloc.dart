@@ -62,6 +62,9 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             .map((e) =>
                 e.prodId == event.productModel.prodId ? event.productModel : e)
             .toList();
+        if (event.productModel.count == 0) {
+          cartProducts.remove(event.productModel);
+        }
         emit(state.copyWith(products: products, addedProducts: cartProducts));
       }
     } catch (e) {
