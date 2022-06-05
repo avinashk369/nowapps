@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobilefirst/apis/ApiClient.dart';
 import 'package:mobilefirst/utils/utils.dart';
 
 import 'blocs/bloc_delegate.dart';
@@ -23,14 +25,25 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  // initialize api client
+  Dio dio = Dio();
+  dio.interceptors.add(LogInterceptor(
+    responseBody: true,
+    request: true,
+    requestBody: true,
+  ));
+  ApiClient apiClient = ApiClient(dio);
   BlocOverrides.runZoned(
-    () => runApp(const MyApp()),
+    () => runApp(MyApp(
+      apiClient: apiClient,
+    )),
     blocObserver: SimpleBlocDelegate(),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key, required this.apiClient}) : super(key: key);
+  final ApiClient apiClient;
 
   // This widget is the root of your application.
   @override
@@ -38,10 +51,10 @@ class MyApp extends StatelessWidget {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider(
-          create: (context) => ProductRepositoryImpl(),
+          create: (context) => ProductRepositoryImpl(apiClient: apiClient),
         ),
         RepositoryProvider(
-          create: (context) => UserRepositoryImpl(),
+          create: (context) => UserRepositoryImpl(apiClient: apiClient),
         ),
       ],
       child: MaterialApp(

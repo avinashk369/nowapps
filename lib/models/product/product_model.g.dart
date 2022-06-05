@@ -16,7 +16,6 @@ ProductModel _$ProductModelFromJson(Map<String, dynamic> json) => ProductModel(
       prodShortName: json['prodShortName'] as String?,
       prodPrice: json['prod_price'] as String?,
       prodMrp: json['prodMrp'] as String?,
-      count: json['count'] as int? ?? 0,
     );
 
 Map<String, dynamic> _$ProductModelToJson(ProductModel instance) {
@@ -37,6 +36,5 @@ Map<String, dynamic> _$ProductModelToJson(ProductModel instance) {
   writeNotNull('prodShortName', instance.prodShortName);
   writeNotNull('prod_price', instance.prodPrice);
   writeNotNull('prodMrp', instance.prodMrp);
-  val['count'] = instance.count;
   return val;
 }

@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:dio/dio.dart';
 import 'package:mobilefirst/apis/ApiClient.dart';
 import 'package:mobilefirst/models/ServerError.dart';
 import 'package:mobilefirst/models/user/retailer_model.dart';
@@ -9,19 +6,9 @@ import 'package:mobilefirst/models/user/user_model.dart';
 import 'user_repository.dart';
 
 class UserRepositoryImpl implements UserRepository {
-  late Dio dio;
-  late ApiClient apiClient;
-  UserRepositoryImpl() {
-    dio = Dio();
-    //dio.options.headers["Content-Type"] = "application/json";
-    //dio.interceptors.add(PrettyDioLogger());
-    dio.interceptors.add(LogInterceptor(
-      responseBody: true,
-      request: true,
-      requestBody: true,
-    ));
-    apiClient = ApiClient(dio);
-  }
+  final ApiClient apiClient;
+
+  UserRepositoryImpl({required this.apiClient});
 
   @override
   Future<UserModel> userLogin(String mobileNumber) async {

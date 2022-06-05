@@ -53,11 +53,16 @@ class ProductList extends StatelessWidget {
                   style: kLabelStyle.copyWith(color: secondaryLight),
                 ),
                 child: IconButton(
-                    icon: const Icon(Icons.shopping_cart),
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(cartRoute,
-                          arguments: context.read<ProductBloc>());
-                    }),
+                  icon: const Icon(Icons.shopping_cart),
+                  onPressed: (state is ProductLoaded)
+                      ? state.addedProducts!.isEmpty
+                          ? () {}
+                          : () {
+                              Navigator.of(context).pushNamed(cartRoute,
+                                  arguments: context.read<ProductBloc>());
+                            }
+                      : () {},
+                ),
               );
             }),
           ],

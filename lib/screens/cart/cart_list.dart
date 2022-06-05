@@ -23,8 +23,15 @@ class CartList extends StatelessWidget {
           SliverList(
             delegate: SliverChildListDelegate(
               [
-                BlocBuilder<ProductBloc, ProductState>(
+                BlocConsumer<ProductBloc, ProductState>(
                     bloc: productBloc,
+                    listener: (context, state) {
+                      if (state is ProductLoaded) {
+                        if (state.addedProducts!.isEmpty) {
+                          Navigator.of(context).pop();
+                        }
+                      }
+                    },
                     builder: (context, state) {
                       if (state is ProductLoaded) {
                         return ListView.builder(

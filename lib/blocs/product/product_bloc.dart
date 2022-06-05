@@ -42,7 +42,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             .map((e) =>
                 e.prodId == event.productModel.prodId ? event.productModel : e)
             .toList();
-        emit(state.copyWith(products: products, addedProducts: cartProducts));
+        emit(ProductLoaded(products: products, addedProducts: cartProducts));
       }
     } catch (e, stac) {
       print("stack trace ${stac.toString()}");
@@ -65,7 +65,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         if (event.productModel.count == 0) {
           cartProducts.remove(event.productModel);
         }
-        emit(state.copyWith(products: products, addedProducts: cartProducts));
+        emit(ProductLoaded(products: products, addedProducts: cartProducts));
       }
     } catch (e) {
       emit(ProductError(message: "Something went wrong"));
@@ -81,7 +81,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
             .where((element) => element.prodId != event.productModel.prodId)
             .toList();
 
-        emit(state.copyWith(
+        emit(ProductLoaded(
             products: state.products, addedProducts: cartProducts));
       }
     } catch (e) {

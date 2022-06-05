@@ -21,7 +21,7 @@ class ProductModel extends Equatable {
   String? prodPrice;
   @JsonKey(name: 'prodMrp')
   String? prodMrp;
-  //@JsonKey(ignore: true)
+  @JsonKey(ignore: true)
   int count = 0;
   ProductModel({
     this.prodImage,

@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:mobilefirst/apis/ApiClient.dart';
 import 'package:mobilefirst/db/db_helper.dart';
 import 'package:mobilefirst/models/product/product_model.dart';
@@ -6,19 +5,9 @@ import 'package:mobilefirst/models/response_model.dart';
 import 'package:mobilefirst/repository/product/product_repository.dart';
 
 class ProductRepositoryImpl implements ProductRepository {
-  late Dio dio;
-  late ApiClient apiClient;
-  ProductRepositoryImpl() {
-    dio = Dio();
-    //dio.options.headers["Content-Type"] = "application/json";
-    //dio.interceptors.add(PrettyDioLogger());
-    dio.interceptors.add(LogInterceptor(
-      responseBody: true,
-      request: true,
-      requestBody: true,
-    ));
-    apiClient = ApiClient(dio);
-  }
+  final ApiClient apiClient;
+
+  ProductRepositoryImpl({required this.apiClient});
 
   @override
   Future<ResponseModel> loadProducts() async {
