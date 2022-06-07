@@ -87,8 +87,9 @@ class CartList extends StatelessWidget {
                           ? null
                           : () {
                               // product list and their total price can be shared to navigation screen
-                              Navigator.of(context).pushNamed(thankYouRoute);
                               PreferenceUtils.putString(seletedRetailer, "");
+                              PreferenceUtils.putBool(checkin, false);
+                              Navigator.of(context).pushNamed(thankYouRoute);
                             }
                       : null,
                   child: Column(

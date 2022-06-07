@@ -93,16 +93,18 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     try {
       bool dbStats = PreferenceUtils.getBool(dbSync);
       if (dbStats) {
+        print("Loading from storage");
         List<ProductModel> products = await DbHeler.instance.getProducts();
 
-        emit(ProductLoaded(products: products, addedProducts: []));
+        emit(ProductLoaded(products: products, addedProducts: const []));
       } else {
+        print("Loading from server");
         ResponseModel responseModel =
             await _productRepositoryImpl.loadProducts();
         await DbHeler.instance.insertProducts(responseModel.data!.products!);
         PreferenceUtils.putBool(dbSync, true);
         emit(ProductLoaded(
-            products: responseModel.data!.products!, addedProducts: []));
+            products: responseModel.data!.products!, addedProducts: const []));
       }
     } on ServerError catch (e) {
       emit(ProductError(message: e.getErrorMessage()));

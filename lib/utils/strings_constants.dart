@@ -7,3 +7,4 @@ const String dbSync = "db_sync";
 const String loggedIn = "loggedIn";
 
 const String seletedRetailer = "retailerId";
+const String checkin = "checkin";

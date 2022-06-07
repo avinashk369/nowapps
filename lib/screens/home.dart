@@ -105,7 +105,7 @@ class _HomeState extends State<Home> {
                         PreferenceUtils.getString(seletedRetailer).isNotEmpty
                     ? () {
                         PreferenceUtils.putString(seletedRetailer, retailerId);
-
+                        PreferenceUtils.putBool(checkin, true);
                         Navigator.of(context).pushNamed(
                           products,
                         );

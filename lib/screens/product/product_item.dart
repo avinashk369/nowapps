@@ -32,7 +32,7 @@ class ProductItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height * .26,
+            height: MediaQuery.of(context).size.height * .24,
             width: double.infinity,
             child: Card(
               elevation: 0,

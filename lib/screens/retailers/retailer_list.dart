@@ -31,7 +31,9 @@ class RetailerList extends StatelessWidget {
               onTap: () {
                 onTap(retailers[index]);
                 retailerId = retailers[index].id!;
-                context.read<ToggleIndexBloc>().toggleState(index, false);
+                if (!PreferenceUtils.getBool(checkin)) {
+                  context.read<ToggleIndexBloc>().toggleState(index, false);
+                }
               },
               tileColor: (state.isSelected && state.index == index) ||
                       retailers[index].id == retailerId

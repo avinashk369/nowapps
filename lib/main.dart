@@ -28,10 +28,10 @@ void main() async {
   // initialize api client
   Dio dio = Dio();
   dio.interceptors.add(LogInterceptor(
-    responseBody: true,
-    request: true,
-    requestBody: true,
-  ));
+      // responseBody: true,
+      // request: true,
+      // requestBody: true,
+      ));
   ApiClient apiClient = ApiClient(dio);
   BlocOverrides.runZoned(
     () => runApp(MyApp(
