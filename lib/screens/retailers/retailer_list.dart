@@ -2,56 +2,57 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobilefirst/blocs/index_toggled.dart';
 import 'package:mobilefirst/blocs/toggle_index_bloc.dart';
-import 'package:mobilefirst/models/user/retailer_model.dart';
+import 'package:mobilefirst/blocs/user/userbloc.dart';
+import 'package:mobilefirst/repository/user/user_repositoryimpl.dart';
+import 'package:mobilefirst/screens/retailers/retailers.dart';
 import 'package:mobilefirst/styles/styles.dart';
-import 'package:mobilefirst/utils/preference_utils.dart';
 import 'package:mobilefirst/utils/theme_constants.dart';
-import 'package:mobilefirst/utils/utils.dart';
+
+import 'package:mobilefirst/widgets/loading_ui.dart';
 
 class RetailerList extends StatelessWidget {
   const RetailerList({
     Key? key,
-    required this.retailers,
-    required this.onTap,
+    required this.userBloc,
   }) : super(key: key);
-  final List<RetailerModel> retailers;
-  final Function(RetailerModel retailer) onTap;
+  final UserBloc userBloc;
 
   @override
   Widget build(BuildContext context) {
-    String retailerId = PreferenceUtils.getString(seletedRetailer);
-    return BlocBuilder<ToggleIndexBloc, IndexToggled>(
-        builder: (context, state) {
-      return ListView.builder(
-          padding: EdgeInsets.zero,
-          shrinkWrap: true,
-          itemCount: retailers.length,
-          itemBuilder: (context, index) {
-            return ListTile(
-              onTap: () {
-                onTap(retailers[index]);
-                retailerId = retailers[index].id!;
-                if (!PreferenceUtils.getBool(checkin)) {
-                  context.read<ToggleIndexBloc>().toggleState(index, false);
-                }
-              },
-              tileColor: (state.isSelected && state.index == index) ||
-                      retailers[index].id == retailerId
-                  ? Colors.grey[200]
-                  : secondaryLight,
-              title: Text(
-                retailers[index].name!,
-                style: kLabelStyleBold,
-              ),
-              subtitle: Text(retailers[index].address!),
-              trailing: Column(
-                children: [
-                  Text(retailers[index].email!),
-                  Text(retailers[index].phone!),
-                ],
-              ),
-            );
-          });
-    });
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<UserBloc>(
+            create: (context) => UserBloc(context.read<UserRepositoryImpl>())
+              ..add(const LoadRetailers())),
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Retailers"),
+        ),
+        body: BlocBuilder<UserBloc, UserState>(
+          builder: (context, state) {
+            if (state is RetailersLoaded) {
+              return Retailers(
+                retailers: state.retailers,
+                userBloc: userBloc,
+              );
+            }
+            if (state is UserInitializing) {
+              return const LoadingUI();
+            }
+            if (state is UserError) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Text(
+                  state.message,
+                  style: kLabelStyleBold.copyWith(color: redColor),
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
   }
 }

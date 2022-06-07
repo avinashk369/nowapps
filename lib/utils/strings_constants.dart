@@ -8,3 +8,5 @@ const String loggedIn = "loggedIn";
 
 const String seletedRetailer = "retailerId";
 const String checkin = "checkin";
+const String retailerName = "retailerName";
+const String hasProduct = "hasProduct";

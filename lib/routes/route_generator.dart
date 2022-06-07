@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mobilefirst/blocs/product/product_bloc.dart';
+import 'package:mobilefirst/blocs/user/user_bloc.dart';
 import 'package:mobilefirst/models/product/product_model.dart';
 import 'package:mobilefirst/screens/auth/verification/screens/user_verification.dart';
 import 'package:mobilefirst/screens/cart/cart_list.dart';
 import 'package:mobilefirst/screens/home.dart';
+import 'package:mobilefirst/screens/order/order_screen.dart';
 import 'package:mobilefirst/screens/product/product_list.dart';
+import 'package:mobilefirst/screens/retailers/retailer_list.dart';
 import 'package:mobilefirst/screens/thank_you.dart';
 import 'package:mobilefirst/screens/welcome.dart';
 import 'package:mobilefirst/utils/slide_right_route.dart';
@@ -29,6 +32,13 @@ class RouteGenerator {
         ));
       case thankYouRoute:
         return SlideRightRoute(page: const ThankYou());
+      case orderRoute:
+        return SlideRightRoute(page: const OrderScreen());
+      case retailerRoute:
+        return SlideRightRoute(
+            page: RetailerList(
+          userBloc: args as UserBloc,
+        ));
       case otpRoute:
         Map<String, dynamic> data = args as Map<String, dynamic>;
 

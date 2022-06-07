@@ -28,3 +28,10 @@ class LoadRetailers extends UserEvent {
   @override
   List<Object> get props => [];
 }
+
+class SelectRetailer extends UserEvent {
+  final String retailerName;
+  const SelectRetailer({required this.retailerName});
+  @override
+  List<Object> get props => [];
+}

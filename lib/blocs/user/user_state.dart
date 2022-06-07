@@ -54,3 +54,13 @@ class RetailersLoaded extends UserState {
   // TODO: implement props
   List<Object?> get props => [retailers];
 }
+
+class RetailerSelected extends UserState {
+  final String retailerName;
+
+  const RetailerSelected({required this.retailerName});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [retailerName];
+}

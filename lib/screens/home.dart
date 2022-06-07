@@ -15,26 +15,14 @@ import 'package:mobilefirst/utils/preference_utils.dart';
 import 'package:mobilefirst/utils/theme_constants.dart';
 import 'package:mobilefirst/utils/utils.dart';
 import 'package:mobilefirst/widgets/custom_appbar.dart';
-import 'package:mobilefirst/widgets/loading_ui.dart';
 
-class Home extends StatefulWidget {
+class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
 
   @override
-  State<Home> createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  late String retailerId;
-
-  @override
-  void initState() {
-    retailerId = PreferenceUtils.getString(seletedRetailer);
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    String storeName = PreferenceUtils.getString(retailerName);
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<ProductBloc>(
@@ -45,11 +33,6 @@ class _HomeState extends State<Home> {
         BlocProvider<UserBloc>(
             create: (context) => UserBloc(context.read<UserRepositoryImpl>())
               ..add(const LoadRetailers())),
-        BlocProvider<ToggleIndexBloc>(
-          create: (context) => ToggleIndexBloc(
-            const IndexToggled(index: -1, isSelected: false),
-          ),
-        ),
       ],
       child: Scaffold(
         appBar: CustomAppBar(
@@ -59,79 +42,108 @@ class _HomeState extends State<Home> {
               icon: const Icon(Icons.logout),
               onPressed: () async {
                 await PreferenceUtils.clear();
+                PreferenceUtils.putBool(dbSync, true);
                 Navigator.of(context).pushNamedAndRemoveUntil(
                     homeRoute, (Route<dynamic> route) => false);
               },
             ),
           ],
         ),
-        body: BlocBuilder<UserBloc, UserState>(
-          builder: (context, state) {
-            if (state is RetailersLoaded) {
-              return RetailerList(
-                retailers: state.retailers,
-                onTap: (retailer) {
-                  retailerId = retailer.id!;
-                },
-              );
-            }
-            if (state is UserInitializing) {
-              return const LoadingUI();
-            }
-            if (state is UserError) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Text(
-                  state.message,
-                  style: kLabelStyleBold.copyWith(color: redColor),
-                ),
-              );
-            }
-            return const SizedBox.shrink();
-          },
-        ),
-        bottomNavigationBar: Builder(builder: (context) {
-          final state = context.watch<ToggleIndexBloc>().state;
-          print("state ${state.isSelected}");
-          return BottomAppBar(
-            color: state.isSelected ||
-                    PreferenceUtils.getString(seletedRetailer).isNotEmpty
-                ? primaryLight
-                : Colors.grey[400],
-            child: SizedBox(
-              height: kToolbarHeight,
-              child: InkWell(
-                onTap: state.isSelected ||
-                        PreferenceUtils.getString(seletedRetailer).isNotEmpty
-                    ? () {
-                        PreferenceUtils.putString(seletedRetailer, retailerId);
-                        PreferenceUtils.putBool(checkin, true);
-                        Navigator.of(context).pushNamed(
-                          products,
-                        );
-                      }
-                    : null,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Check In".toUpperCase(),
-                      textAlign: TextAlign.center,
-                      style: kLabelStyleBold.copyWith(
-                          color: state.isSelected ||
-                                  PreferenceUtils.getString(seletedRetailer)
-                                      .isNotEmpty
-                              ? secondaryLight
-                              : Colors.grey[100],
-                          fontSize: 18),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }),
+        body: Padding(
+            padding: const EdgeInsets.all(8),
+            child: BlocBuilder<UserBloc, UserState>(
+              builder: (context, state) {
+                if (state is RetailerSelected) {
+                  return checkout(context, state.retailerName);
+                }
+                if (storeName.isNotEmpty) {
+                  return checkout(context, storeName);
+                }
+                return ElevatedButton(
+                  child: const Text('Check in'),
+                  onPressed: () {
+                    Navigator.of(context).pushNamed(retailerRoute,
+                        arguments: context.read<UserBloc>());
+                  },
+                );
+              },
+            )),
+        // body: BlocBuilder<UserBloc, UserState>(
+        //   builder: (context, state) {
+        //     if (state is RetailersLoaded) {
+        //       return RetailerList(
+        //         retailers: state.retailers,
+        //         onTap: (retailer) {
+        //           retailerId = retailer.id!;
+        //         },
+        //       );
+        //     }
+        //     if (state is UserInitializing) {
+        //       return const LoadingUI();
+        //     }
+        //     if (state is UserError) {
+        //       return Padding(
+        //         padding: const EdgeInsets.symmetric(horizontal: 8),
+        //         child: Text(
+        //           state.message,
+        //           style: kLabelStyleBold.copyWith(color: redColor),
+        //         ),
+        //       );
+        //     }
+        //     return const SizedBox.shrink();
+        //   },
+        // ),
+        // bottomNavigationBar: Builder(builder: (context) {
+        //   final state = context.watch<ToggleIndexBloc>().state;
+        //   print("state ${state.isSelected}");
+        //   return BottomAppBar(
+        //     color: state.isSelected ||
+        //             PreferenceUtils.getString(seletedRetailer).isNotEmpty
+        //         ? primaryLight
+        //         : Colors.grey[400],
+        //     child: SizedBox(
+        //       height: kToolbarHeight,
+        //       child: InkWell(
+        //         onTap: state.isSelected ||
+        //                 PreferenceUtils.getString(seletedRetailer).isNotEmpty
+        //             ? () {
+        //                 PreferenceUtils.putString(seletedRetailer, retailerId);
+        //                 PreferenceUtils.putBool(checkin, true);
+        //                 Navigator.of(context).pushNamed(
+        //                   products,
+        //                 );
+        //               }
+        //             : null,
+        //         child: Column(
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //           children: [
+        //             Text(
+        //               "Check In".toUpperCase(),
+        //               textAlign: TextAlign.center,
+        //               style: kLabelStyleBold.copyWith(
+        //                   color: state.isSelected ||
+        //                           PreferenceUtils.getString(seletedRetailer)
+        //                               .isNotEmpty
+        //                       ? secondaryLight
+        //                       : Colors.grey[100],
+        //                   fontSize: 18),
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //     ),
+        //   );
+        // }),
       ),
+    );
+  }
+
+  Widget checkout(BuildContext context, String name) {
+    return ElevatedButton(
+      child: Text('Check out to $name'),
+      onPressed: () {
+        Navigator.of(context).pushNamed(orderRoute);
+      },
     );
   }
 }

@@ -21,6 +21,11 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<UserLoginEvent>((event, emit) => _mapUserLoginEvent(event, emit));
     on<VerifyOtp>((event, emit) => verifyOtpEvent(event, emit));
     on<LoadRetailers>((event, emit) => loadRetailersEvent(event, emit));
+    on<SelectRetailer>((event, emit) => selectRetailerEvent(event, emit));
+  }
+  Future selectRetailerEvent(
+      SelectRetailer event, Emitter<UserState> emit) async {
+    emit(RetailerSelected(retailerName: event.retailerName));
   }
 
   Future loadRetailersEvent(

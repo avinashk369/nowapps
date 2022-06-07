@@ -11,6 +11,7 @@ import 'package:mobilefirst/routes/route_constants.dart';
 import 'package:mobilefirst/screens/product/product_item.dart';
 import 'package:mobilefirst/styles/styles.dart';
 import 'package:mobilefirst/utils/theme_constants.dart';
+import 'package:mobilefirst/utils/utils.dart';
 import 'package:mobilefirst/widgets/custom_appbar.dart';
 
 class ProductList extends StatelessWidget {
@@ -42,6 +43,10 @@ class ProductList extends StatelessWidget {
           title: const Text("Products"),
           actions: [
             BlocBuilder<ProductBloc, ProductState>(builder: (context, state) {
+              if (state is ProductLoaded) {
+                PreferenceUtils.putBool(
+                    hasProduct, state.addedProducts!.isNotEmpty);
+              }
               return Badge(
                 position: BadgePosition.topEnd(top: 0, end: 5),
                 animationDuration: const Duration(milliseconds: 300),
